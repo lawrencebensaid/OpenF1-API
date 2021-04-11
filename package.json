@@ -1,12 +1,13 @@
 {
   "name": "openf1",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "OpenF1 REST API",
   "scripts": {
     "start": "./main.js"
   },
   "keywords": [
     "Formula 1",
+    "F1",
     "F1TV",
     "REST",
     "API"

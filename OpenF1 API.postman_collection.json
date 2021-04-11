@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "197a63a3-85ca-40d2-955c-dffe8924aeb6",
+		"name": "OpenF1 API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "v1",
+			"item": [
+				{
+					"name": "Content",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v1/content",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"content"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Image",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v1/image/{{imageID}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"image",
+								"{{imageID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v1/update",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v1",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "v2",
+			"item": [
+				{
+					"name": "Content",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/content",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"content"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Content item",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/content/{{contentID}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"content",
+								"{{contentID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "root",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": ""
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "contentID",
+			"value": ""
+		},
+		{
+			"key": "imageID",
+			"value": ""
+		}
+	]
+}
