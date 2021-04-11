@@ -54,6 +54,12 @@ const db = firebase.firestore();
     response.json(JSON.parse(fs.readFileSync("./out.json")));
   });
 
+  app.get("/v1/image/:ID", [middleware], async (request, response) => {
+    const { ID } = request.params;
+    response.contentType("image/jpeg");
+    response.send(await client.image(ID));
+  });
+
   app.post("/v1/update", [middleware], async (request, response) => {
     try {
       const index = await client.index();
@@ -69,8 +75,7 @@ const db = firebase.firestore();
   });
 
   app.get("/v2/content", [middleware], async (request, response) => {
-    await client.performAuthentication(F1_USERNAME, F1_PASSWORD);
-    const index = await client.index();
+    const index = await client.indexV2();
     response.json(index);
   });
 

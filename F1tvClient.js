@@ -55,6 +55,27 @@ class F1tvClient {
 
 
   /**
+   * 
+   */
+  image(ID, width = 1920, height = 1080) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await http.get({
+          uri: `https://ott.${HOST}/image-resizer/image/${ID}?w=${width}&h=${height}&o=L`,
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15",
+          },
+          encoding: null
+        });
+        resolve(response);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+
+  /**
    * @param {string} contentID 
    */
   getContentEndpoint(contentID) {
