@@ -1,0 +1,27 @@
+{
+  "name": "openf1",
+  "version": "1.0.0",
+  "description": "OpenF1 REST API",
+  "scripts": {
+    "start": "./main.js"
+  },
+  "keywords": [
+    "Formula 1",
+    "F1TV",
+    "REST",
+    "API"
+  ],
+  "author": {
+    "name": "Lawrence Bensaid",
+    "email": "lawrencebensaid@icloud.com",
+    "url": "https://lawrencebensaid.com"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "firebase": "^8.3.3",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.9"
+  }
+}
