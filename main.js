@@ -1,13 +1,5 @@
 #!/usr/local/bin/node
 
-const F1tvClient = require("./F1tvClient");
-const fs = require("fs");
-const express = require("express");
-const firebase = require('firebase/app');
-require('firebase/auth');
-require('firebase/firestore');
-
-
 require("dotenv").config();
 const {
   PORT,
@@ -18,6 +10,11 @@ const {
   FB_SENDER_ID,
   FB_APP_ID,
 } = process.env;
+const OUT_FILE_PATH = process.env.OUT_FILE_PATH || "./out.json";
+
+const firebase = require('firebase/app');
+require('firebase/auth');
+require('firebase/firestore');
 
 firebase.initializeApp({
   apiKey: FB_KEY,
@@ -27,6 +24,14 @@ firebase.initializeApp({
   messagingSenderId: FB_SENDER_ID,
   appId: `1:${FB_SENDER_ID}:web:${FB_APP_ID}`
 });
+
+const F1tvClient = require("./F1tvClient.js");
+const Content = require("./controllers/Content.js");
+const fs = require("fs");
+const express = require("express");
+
+
+const { version, description } = require('./package.json');
 
 const db = firebase.firestore();
 
@@ -46,12 +51,13 @@ const db = firebase.firestore();
 
   app.get("/", (request, response) => {
     response.json({
-      status: "normal"
+      status: "normal",
+      version, description
     });
   });
 
   app.get("/v1/content", [middleware], async (request, response) => {
-    response.json(JSON.parse(fs.readFileSync("./out.json")));
+    response.json(JSON.parse(fs.readFileSync(OUT_FILE_PATH)));
   });
 
   app.get("/v1/image/:ID", [middleware], async (request, response) => {
@@ -75,13 +81,15 @@ const db = firebase.firestore();
   });
 
   app.get("/v2/content", [middleware], async (request, response) => {
-    const index = await client.indexV2();
-    response.json(index);
+    new Content().index(request, response);
   });
 
   app.get("/v2/content/:ID", [middleware], async (request, response) => {
-    const { ID } = request.params;
-    response.json(await client.getContentEndpoint(ID));
+    new Content().show(request, response);
+  });
+
+  app.get("/v2/content/:ID/provision", [middleware], async (request, response) => {
+    new Content().provision(request, response);
   });
 
   app.listen(PORT || 80);

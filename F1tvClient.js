@@ -25,6 +25,41 @@ class F1tvClient {
 
   /**
    * 
+   * 
+   * @returns {Promise<object>}
+   */
+  getArchive() {
+    return this.getPage(493);
+  }
+
+
+  /**
+   * 
+   * 
+   * @returns {Promise<object>}
+   */
+  getPage(page) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await http.get({
+          uri: `https://f1tv.${HOST}/2.0/R/ENG/WEB_DASH/ALL/PAGE/${page}/F1_TV_Pro_Annual/2`
+          // uri: `https://f1tv.${HOST}/2.0/R/ENG/WEB_DASH/ALL/MENU/F1_TV_Pro_Annual/2`
+        });
+        const data = JSON.parse(response);
+        const { resultObj: { containers } } = data;
+
+        resolve(containers);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+
+  /**
+   * 
+   * 
+   * @returns {Promise<object>}
    */
   index() {
     return new Promise(async (resolve, reject) => {
@@ -56,6 +91,8 @@ class F1tvClient {
 
   /**
    * 
+   * 
+   * @returns {Promise<string>}
    */
   image(ID, width = 1920, height = 1080) {
     return new Promise(async (resolve, reject) => {
@@ -76,7 +113,10 @@ class F1tvClient {
 
 
   /**
+   * 
+   * 
    * @param {string} contentID 
+   * @returns {Promise<string>}
    */
   getContentEndpoint(contentID) {
     return new Promise(async (resolve, reject) => {
@@ -97,8 +137,11 @@ class F1tvClient {
 
 
   /**
+   * 
+   * 
    * @param {string} username Login username
    * @param {string} password Login password
+   * @returns {Promise}
    */
   performAuthentication(username, password) {
     return new Promise(async (resolve, reject) => {
@@ -116,8 +159,11 @@ class F1tvClient {
 
 
   /**
+   * 
+   * 
    * @param {string} username Login username
    * @param {string} password Login password
+   * @returns {Promise<object>}
    */
   authenticate(username, password) {
     return new Promise(async (resolve, reject) => {
@@ -146,7 +192,10 @@ class F1tvClient {
 
 
   /**
+   * 
+   * 
    * @param {string} token Ascendon token.
+   * @returns {Promise<string>}
    */
   getEntitlement(token) {
     return new Promise(async (resolve, reject) => {
@@ -168,6 +217,8 @@ class F1tvClient {
 
 
   /**
+   * 
+   * 
    * @param {object[]} items
    * @returns {Promise}
    */
@@ -200,6 +251,8 @@ class F1tvClient {
 
 
   /**
+   * 
+   * 
    * @returns {Promise}
    */
   applyContent() {
@@ -244,6 +297,8 @@ class F1tvClient {
 
 
   /**
+   * 
+   * 
    * @returns {Promise}
    */
   pruneContent() {
@@ -261,32 +316,6 @@ class F1tvClient {
   }
 
 }
-
-
-
-function formatContainer1(data) {
-  data.label = data.metadata.label;
-  data.endpoint = data.actions[0].uri;
-  delete data.layout;
-  delete data.actions;
-  delete data.metadata;
-  delete data.totalDepth;
-  delete data.translations;
-  return data;
-}
-
-
-function formatContainer2(data) {
-  data.label = (data.metadata || { label: null }).label;
-  data.items = data.retrieveItems ? data.retrieveItems.resultObj.containers : [];
-  delete data.layout;
-  delete data.actions;
-  delete data.metadata;
-  delete data.translations;
-  delete data.retrieveItems;
-  return data;
-}
-
 
 
 module.exports = F1tvClient;
