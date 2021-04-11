@@ -50,7 +50,7 @@ const db = firebase.firestore();
     });
   });
 
-  app.get("/v1/stream", [middleware], async (request, response) => {
+  app.get("/v1/content", [middleware], async (request, response) => {
     response.json(JSON.parse(fs.readFileSync("./out.json")));
   });
 
