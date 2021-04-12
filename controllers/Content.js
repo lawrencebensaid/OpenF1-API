@@ -103,14 +103,14 @@ class Content {
     try {
       const { ID } = request.params;
       const content = db.collection("content");
-      await fetchContent(ID);
+      await fetchContent([ID]);
       const doc = (await content.doc(ID).get()).data();
       doc.id = ID;
       response.json(doc);
     } catch (error) {
       console.log(error);
       response.status(500);
-      response.json({ message: error.message });
+      response.json({ message: "A server error occurred! :/" });
     }
   }
 
@@ -121,7 +121,8 @@ class Content {
   async provision(request, response) {
     try {
       const { ID } = request.params;
-      const endpoint = await client.getContentEndpoint(ID);
+      const { channel } = request.query;
+      const endpoint = await client.getContentEndpoint(ID, channel);
       if (endpoint === null) {
         response.status(400);
         response.json({
@@ -221,7 +222,7 @@ function fetchContent(indices = null) {
               }
             } = containers[0];
             const alternativeStreams = additionalStreams || []
-            await content.doc(id).set({
+            const structure = {
               title,
               subtitle: titleBrief,
               description: longDescription,
@@ -265,9 +266,10 @@ function fetchContent(indices = null) {
                 teamImg,
                 hex
               }) => {
+                if (racingNumber === 0) return null;
                 return {
                   code: title,
-                  color: hex.substr(1),
+                  color: (hex || "").substr(1) || null,
                   firstname: driverFirstName,
                   lastname: driverLastName,
                   number: racingNumber,
@@ -276,7 +278,7 @@ function fetchContent(indices = null) {
                   driverImg,
                   teamImg,
                 }
-              }),
+              }).filter(x => x),
               channels: alternativeStreams.map(({
                 title,
                 playbackUrl
@@ -289,14 +291,14 @@ function fetchContent(indices = null) {
                   channel
                 }
               })
-            });
+            };
+            await content.doc(id).set(structure);
           } else {
             console.log("WHAT?! Total is more than 1. That's unexpected!");
           }
 
         } catch (error) {
           console.log(error);
-
         }
       }
       resolve();

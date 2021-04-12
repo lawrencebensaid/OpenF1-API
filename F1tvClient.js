@@ -115,14 +115,15 @@ class F1tvClient {
   /**
    * 
    * 
-   * @param {string} contentID 
+   * @param {Number} contentID 10 digit content id. For example: `1000002714`
+   * @param {Number?} channelID 4 digit channel id. For example: `1022`
    * @returns {Promise<string>}
    */
-  getContentEndpoint(contentID) {
+  getContentEndpoint(contentID, channelID = null) {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await http.get({
-          uri: `https://f1tv.${HOST}/1.0/R/ENG/WEB_HLS/ALL/CONTENT/PLAY?contentId=${contentID}`,
+          uri: `https://f1tv.${HOST}/1.0/R/ENG/WEB_HLS/ALL/CONTENT/PLAY?contentId=${contentID}${channelID ? `&channelId=${channelID}` : ""}`,
           headers: {
             entitlementtoken: this.token
           }

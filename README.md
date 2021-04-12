@@ -92,6 +92,7 @@ Name | Method | Type | Description | Example
 Name | Method | Type | Description | Example
 --- | --- | --- | --- | ---
 **ID** | params | `Number` | Content ID | 1000000415
+**channel** | query | `Number` | Channel ID | 1022
 
 <br/>
 

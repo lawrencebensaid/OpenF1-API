@@ -112,6 +112,62 @@
 				},
 				{
 					"name": "Content",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const body = pm.response.json();",
+									"",
+									"if (body[0]) {",
+									"    pm.collectionVariables.set(\"contentID\", body[0].id);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/content",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"content"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Content (search)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const body = pm.response.json();",
+									"",
+									"if (body[0]) {",
+									"    pm.collectionVariables.set(\"contentID\", body[0].id);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -192,6 +248,38 @@
 					"response": []
 				},
 				{
+					"name": "Content provision (channel)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/content/{{contentID}}/provision?channel=1016",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"content",
+								"{{contentID}}",
+								"provision"
+							],
+							"query": [
+								{
+									"key": "channel",
+									"value": "1016"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Content thumbnail",
 					"request": {
 						"method": "GET",
@@ -212,6 +300,42 @@
 								"content",
 								"{{contentID}}",
 								"thumbnail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Content thumbnail (width+height)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/content/{{contentID}}/thumbnail?width=48&height=32",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"content",
+								"{{contentID}}",
+								"thumbnail"
+							],
+							"query": [
+								{
+									"key": "width",
+									"value": "48"
+								},
+								{
+									"key": "height",
+									"value": "32"
+								}
 							]
 						}
 					},
@@ -259,19 +383,13 @@
 	],
 	"variable": [
 		{
+			"id": "0b5d729d-a350-4d18-9b88-2b8f5be40350",
 			"key": "baseUrl",
-			"value": ""
+			"value": "https://api.openf1.nl"
 		},
 		{
+			"id": "49b2f61c-9f45-4209-816d-5674f1d1fc89",
 			"key": "accessToken",
-			"value": ""
-		},
-		{
-			"key": "contentID",
-			"value": ""
-		},
-		{
-			"key": "imageID",
 			"value": ""
 		}
 	]
