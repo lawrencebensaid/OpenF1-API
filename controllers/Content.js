@@ -37,19 +37,56 @@ class Content {
   /**
    * 
    */
+  async reindex(request, response) {
+    try {
+      const start = new Date().valueOf();
+      const index = db.collection("index");
+      (await index.get()).forEach(doc => { doc.ref.delete(); });
+      await indexContent();
+      response.json({
+        message: "Reindexing complete",
+        duration: Math.floor((new Date().valueOf() - start) / 1000)
+      });
+    } catch (error) {
+      console.log(error);
+      response.status(500);
+      response.json({ message: error.message });
+    }
+  }
+
+
+  /**
+   * 
+   */
   async index(request, response) {
     try {
-      const content = db.collection("content");
-      const archive = await client.getArchive();
-      await indexContent(archive);
-      await fetchContent();
-      const allDocs = await content.get();
-      const data = allDocs.docs.map(doc => {
-        const result = doc.data();
-        result.id = doc.id;
-        return result;
-      });
-      console.log(data);
+      const start = new Date().valueOf();
+      const index = db.collection("index");
+      const search = (request.query.search || "").toLowerCase();
+      const allIndexes = {};
+      for (const doc of (await index.get()).docs) {
+        allIndexes[doc.id] = doc.data();
+      }
+      var results = allIndexes;
+      if (search) {
+        results = {};
+        for (const id in allIndexes) {
+          const data = allIndexes[id];
+          const title = data.title.toLowerCase();
+          if (title.includes(search)) {
+            results[id] = data;
+          }
+        }
+      }
+
+      const data = [];
+      for (const id in results) {
+        const result = allIndexes[id];
+        result.id = id;
+        data.push(result);
+      }
+
+      console.log(`Duration: ${Math.floor((new Date().valueOf() - start) / 1000)} seconds`);
       response.json(data);
     } catch (error) {
       console.log(error);
@@ -66,6 +103,7 @@ class Content {
     try {
       const { ID } = request.params;
       const content = db.collection("content");
+      await fetchContent(ID);
       const doc = (await content.doc(ID).get()).data();
       doc.id = ID;
       response.json(doc);
@@ -83,7 +121,36 @@ class Content {
   async provision(request, response) {
     try {
       const { ID } = request.params;
-      response.json(await client.getContentEndpoint(ID));
+      const endpoint = await client.getContentEndpoint(ID);
+      if (endpoint === null) {
+        response.status(400);
+        response.json({
+          message: "Content item does not have any HLS resources."
+        });
+        return;
+      }
+      response.json({ hls: endpoint });
+    } catch (error) {
+      console.log(error);
+      response.status(500);
+      response.json({ message: error.message });
+    }
+  }
+
+
+  /**
+   * 
+   */
+  async thumbnail({ params, query }, response) {
+    try {
+      const { ID } = params;
+      const width = query.width || 1920;
+      const height = query.height || 1080;
+      const results = await http.get(`https://f1tv.${HOST}/2.0/R/ENG/WEB_DASH/ALL/CONTENT/VIDEO/${ID}/F1_TV_Pro_Annual/2`);
+      const { resultObj: { containers } } = JSON.parse(results);
+      const { pictureUrl } = containers[0].metadata;
+      response.contentType("image/jpeg");
+      response.send(await client.image(pictureUrl, width, height));
     } catch (error) {
       console.log(error);
       response.status(500);
@@ -100,15 +167,16 @@ class Content {
  * 
  * @returns {Promise}
  */
-function fetchContent() {
+function fetchContent(indices = null) {
+  const index = db.collection("index");
   const content = db.collection("content");
   return new Promise(async (resolve, reject) => {
     try {
-      const allContent = await content.get()
-      for (const doc of allContent.docs) {
+      indices = indices || (await index.get()).docs.map(doc => doc.id);
+      for (const id of indices) {
         try {
-          console.log(doc.id);
-          const response = await http.get(`https://f1tv.${HOST}/2.0/R/ENG/WEB_DASH/ALL/CONTENT/VIDEO/${doc.id}/F1_TV_Pro_Annual/2`);
+          console.log(id);
+          const response = await http.get(`https://f1tv.${HOST}/2.0/R/ENG/WEB_DASH/ALL/CONTENT/VIDEO/${id}/F1_TV_Pro_Annual/2`);
           const { resultObj: { total, containers } } = JSON.parse(response);
           if (total === 1) {
             const {
@@ -153,7 +221,7 @@ function fetchContent() {
               }
             } = containers[0];
             const alternativeStreams = additionalStreams || []
-            await content.doc(doc.id).set({
+            await content.doc(id).set({
               title,
               subtitle: titleBrief,
               description: longDescription,
@@ -199,7 +267,7 @@ function fetchContent() {
               }) => {
                 return {
                   code: title,
-                  color: hex,
+                  color: hex.substr(1),
                   firstname: driverFirstName,
                   lastname: driverLastName,
                   number: racingNumber,
@@ -210,6 +278,7 @@ function fetchContent() {
                 }
               }),
               channels: alternativeStreams.map(({
+                title,
                 playbackUrl
               }) => {
                 const components1 = playbackUrl.split("channelId=")[1].split("&amp;")[0];
@@ -220,7 +289,7 @@ function fetchContent() {
                   channel
                 }
               })
-            }, { merge: true });
+            });
           } else {
             console.log("WHAT?! Total is more than 1. That's unexpected!");
           }
@@ -242,48 +311,89 @@ function fetchContent() {
 /**
  * 
  * 
- * @param {object[]} items
  * @returns {Promise}
  */
-function indexContent(items) {
-  const content = db.collection("content");
+function indexContent(items = null) {
+  const index = db.collection("index");
   return new Promise(async (resolve, reject) => {
-    for (const i in items) {
-      const container = items[i];
-      const { retrieveItems } = container;
-      const { resultObj } = retrieveItems || {};
-      const { containers } = resultObj || {};
-      if (Array.isArray(containers)) {
-        await indexContent(containers);
-      } else if (items[i].layout === "CONTENT_ITEM") {
-        const { id, metadata, actions } = items[i];
+    try {
+      if (items === null) {
+        items = await client.getArchive();
+      }
+      for (const i in items) {
+        const container = items[i];
+        const { retrieveItems } = container;
+        const { resultObj } = retrieveItems || {};
+        const { containers } = resultObj || {};
+        if (Array.isArray(containers)) {
+          await indexContent(containers);
+        } else if (items[i].layout === "CONTENT_ITEM") {
+          const { id, metadata, actions } = items[i];
 
-        for (const { uri, targetType } of actions) {
-          if (targetType === "DETAILS_PAGE") continue;
-          const response = await http.get(`https://f1tv.${HOST}${uri}`);
-          const { resultObj } = JSON.parse(response) || {};
-          const { containers } = resultObj || {};
-          if (Array.isArray(containers)) {
-            for (const container of containers) {
-              const retrieveItems2 = container.retrieveItems || {};
-              const resultObj2 = retrieveItems2.resultObj || {};
-              const containers2 = resultObj2.containers || {};
-              if (Array.isArray(containers2)) {
-                for (const { id } of containers2) {
-                  await content.doc(id).set({}, { merge: true });
+          for (const { uri, targetType } of actions) {
+            if (targetType === "DETAILS_PAGE") continue;
+            const response = await http.get(`https://f1tv.${HOST}${uri}`);
+            const { resultObj } = JSON.parse(response) || {};
+            const { containers } = resultObj || {};
+            if (Array.isArray(containers)) {
+              for (const container of containers) {
+                const retrieveItems2 = container.retrieveItems || {};
+                const resultObj2 = retrieveItems2.resultObj || {};
+                const containers2 = resultObj2.containers || {};
+                if (Array.isArray(containers2)) {
+                  for (const container2 of containers2) {
+                    const { id, metadata: { objectType, title, duration }, actions: actions2 } = container2;
+                    const data = { title, type: objectType };
+                    if (duration) {
+                      data.duration = duration;
+                    }
+                    await index.doc(id).set(data);
+                    const uri2 = actions2[0].uri;
+                    if (objectType === "BUNDLE" && uri2) {
+                      const { resultObj: { containers } } = JSON.parse(await http.get(`https://f1tv.${HOST}${uri2}`));
+                      await indexContent(containers);
+                    }
+                  }
                 }
               }
             }
           }
-        }
 
-        const type = metadata.objectType;
-        if (type !== "LAUNCHER" && type !== "BUNDLE") {
-          await content.doc(id).set({}, { merge: true });
+          const { objectType, title, duration } = metadata;
+          if (objectType !== "LAUNCHER") {
+            const data = { title, type: objectType };
+            if (duration) {
+              data.duration = duration;
+            }
+            await index.doc(id).set(data);
+          }
         }
       }
+      resolve();
+    } catch (error) {
+      reject(error);
     }
-    resolve();
+  });
+}
+
+
+/**
+ * 
+ * 
+ * @returns {Promise}
+ */
+function extractBundles() {
+  const index = db.collection("index");
+  return new Promise(async (resolve, reject) => {
+    try {
+      const bundles = await index.where("type", "==", "bundle").get();
+      for (const { page } of bundles) {
+        const response = JSON.parse(await http.get(`https://f1tv.${HOST}/2.0/R/ENG/WEB_DASH/ALL/PAGE/${page}/F1_TV_Pro_Annual/2`));
+      }
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 

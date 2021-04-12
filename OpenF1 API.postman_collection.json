@@ -87,6 +87,30 @@
 			"name": "v2",
 			"item": [
 				{
+					"name": "Reindex",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/reindex",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"reindex"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Content",
 					"request": {
 						"method": "GET",
@@ -98,20 +122,26 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/v2/content",
+							"raw": "{{baseUrl}}/v2/content?search=BRITISH",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"v2",
 								"content"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "BRITISH"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Content item",
+					"name": "Content show",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -130,6 +160,58 @@
 								"v2",
 								"content",
 								"{{contentID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Content provision",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/content/{{contentID}}/provision",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"content",
+								"{{contentID}}",
+								"provision"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Content thumbnail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/content/{{contentID}}/thumbnail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"content",
+								"{{contentID}}",
+								"thumbnail"
 							]
 						}
 					},

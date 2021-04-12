@@ -69,7 +69,6 @@ const db = firebase.firestore();
   app.post("/v1/update", [middleware], async (request, response) => {
     try {
       const index = await client.index();
-      fs.writeFileSync("./data.json", JSON.stringify(index, null, 2));
       response.json(index);
     } catch (error) {
       console.log(error);
@@ -78,6 +77,10 @@ const db = firebase.firestore();
         error: error.message
       });
     }
+  });
+
+  app.post("/v2/reindex", [middleware], async (request, response) => {
+    new Content().reindex(request, response);
   });
 
   app.get("/v2/content", [middleware], async (request, response) => {
@@ -90,6 +93,10 @@ const db = firebase.firestore();
 
   app.get("/v2/content/:ID/provision", [middleware], async (request, response) => {
     new Content().provision(request, response);
+  });
+
+  app.get("/v2/content/:ID/thumbnail", [middleware], async (request, response) => {
+    new Content().thumbnail(request, response);
   });
 
   app.listen(PORT || 80);
@@ -130,7 +137,13 @@ async function middleware(req, res, next) {
 
     next();
   } catch (error) {
-    res.status(500);
-    res.json({ message: "Server error! Is the environment configured properly?" });
+    if (error.code === "resource-exhausted") {
+      res.status(400);
+      res.json({ message: "Daily quota exceeded" });
+    } else {
+      console.log(error);
+      res.status(500);
+      res.json({ message: "Server error! Is the environment configured properly?" });
+    }
   }
 }

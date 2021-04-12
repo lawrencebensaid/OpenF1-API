@@ -49,24 +49,62 @@ When calling a protected endpoint you should include the `authkey` header contai
 
 ### `GET /`
 
-Should return `{ "status": "normal" }` as a response;
+**Description:** Should return `{ "status": "normal" }` as a response;
 
-### `GET /v1/content`
+<br/>
 
-Returns all content items as a response.
+### `POST /v2/reindex`
 
-### `GET /v1/image/:ID`
+**Description:** Reindexes all content.
 
-Returns the requested image as an image.
-
-### `POST /v1/update`
-
-Updates the local database and reindexes the content.
+<br/>
 
 ### `GET /v2/content`
 
-Returns all content items as a response.
+**Description:** Returns all content items as a response.
+
+**Parameters:**
+
+Name | Method | Type | Description | Example
+--- | --- | --- | --- | ---
+**search** | query | `String` | Search query | British Grand Prix
+
+<br/>
 
 ### `GET /v2/content/:ID`
 
-Returns a specific content item as a response.
+**Description:** Returns a specific content item as a response.
+
+**Parameters:**
+
+Name | Method | Type | Description | Example
+--- | --- | --- | --- | ---
+**ID** | params | `Number` | Content ID | 1000000415
+
+<br/>
+
+### `GET /v2/content/:ID/provision`
+
+**Description:** Provisions a content HLS stream and returns the prepared uri as a response.
+
+**Parameters:**
+
+Name | Method | Type | Description | Example
+--- | --- | --- | --- | ---
+**ID** | params | `Number` | Content ID | 1000000415
+
+<br/>
+
+### `GET /v2/content/:ID/thumbnail`
+
+**Description:** Returns the content's thumbnail as an image.
+
+**Parameters:**
+
+Name | Method | Type | Description | Example
+--- | --- | --- | --- | ---
+**ID** | params | `Number` | Content ID | 1000000415
+**width** | query | `Number` | Search query | 1920
+**height** | query | `Number` | Search query | 1080
+
+<br/>
