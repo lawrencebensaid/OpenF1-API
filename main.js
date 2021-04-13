@@ -107,7 +107,7 @@ const db = FB_KEY ? firebase.firestore() : null;
     new Content().provision(request, response);
   });
 
-  app.get("/v2/content/:ID/thumbnail", [middleware], async (request, response) => {
+  app.get("/v2/content/:ID/thumbnail", [], async (request, response) => {
     new Content().thumbnail(request, response);
   });
 
