@@ -43,10 +43,10 @@ const db = FB_KEY ? firebase.firestore() : null;
     if (!fs.existsSync("./.cache")) {
       fs.mkdirSync("./.cache");
     }
-    if (!fs.existsSync("./.cache.index.json")) {
+    if (!fs.existsSync("./.cache/index.json")) {
       fs.writeFileSync("./.cache/index.json", "{}");
     }
-    if (!fs.existsSync("./.cache.content.json")) {
+    if (!fs.existsSync("./.cache/content.json")) {
       fs.writeFileSync("./.cache/content.json", "{}");
     }
   }

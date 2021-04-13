@@ -197,6 +197,52 @@
 					"response": []
 				},
 				{
+					"name": "Content (genre)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const body = pm.response.json();",
+									"",
+									"if (body[0]) {",
+									"    pm.collectionVariables.set(\"contentID\", body[0].id);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "authkey",
+								"value": "{{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/v2/content?genre=RACE",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v2",
+								"content"
+							],
+							"query": [
+								{
+									"key": "genre",
+									"value": "RACE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Content show",
 					"request": {
 						"method": "GET",
@@ -383,13 +429,18 @@
 	],
 	"variable": [
 		{
-			"id": "0b5d729d-a350-4d18-9b88-2b8f5be40350",
+			"id": "7d16b6db-50bd-437d-b210-1c480503a495",
 			"key": "baseUrl",
 			"value": "https://api.openf1.nl"
 		},
 		{
-			"id": "49b2f61c-9f45-4209-816d-5674f1d1fc89",
+			"id": "6c22391f-04a8-4dee-b00d-34b9cf5a7b58",
 			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"id": "eeae6b97-d863-48e3-8dbc-f6134f3088e4",
+			"key": "contentID",
 			"value": ""
 		}
 	]

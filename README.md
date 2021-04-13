@@ -69,6 +69,7 @@ When calling a protected endpoint you should include the `authkey` header contai
 Name | Method | Type | Description | Example
 --- | --- | --- | --- | ---
 **search** | query | `String` | Search query | British Grand Prix
+**genre** | query | `String` | Genre filter | Practice 3
 
 <br/>
 

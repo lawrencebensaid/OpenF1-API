@@ -70,31 +70,42 @@ class Content {
       const start = new Date().valueOf();
       const index = db.collection("index");
       const search = (request.query.search || "").toLowerCase();
-      const allIndexes = {};
-      const source = DATA_LOCATION === "local" ? JSON.parse(fs.readFileSync("./.cache/content.json")) : (await index.get()).docs;
+      const genre = (request.query.genre || "").toLowerCase();
+      const layer0 = {};
+      const source = DATA_LOCATION === "local" ? JSON.parse(fs.readFileSync("./.cache/index.json")) : (await index.get()).docs;
       for (const id in source) {
         const doc = source[id]
         if (DATA_LOCATION === "local") {
-          allIndexes[id] = doc;
+          layer0[id] = doc;
         } else {
-          allIndexes[doc.id] = doc.data();
+          layer0[doc.id] = doc.data();
         }
       }
-      var results = allIndexes;
+      const layer1 = genre ? {} : layer0;
+      if (genre) {
+        for (const id in layer0) {
+          const data = layer0[id];
+          if (data.genre && data.genre.toLowerCase() === genre) {
+            layer1[id] = data;
+          }
+        }
+      }
+      const layer2 = search ? {} : layer1;
       if (search) {
-        results = {};
-        for (const id in allIndexes) {
-          const data = allIndexes[id];
+        for (const id in layer1) {
+          const data = layer1[id];
           const title = data.title.toLowerCase();
           if (title.includes(search)) {
-            results[id] = data;
+            layer2[id] = data;
           }
         }
       }
 
       const data = [];
-      for (const id in results) {
-        const result = allIndexes[id];
+      for (const i in layer2) {
+        const result = layer0[i];
+        const id = parseInt(i)
+        if (!id) continue;
         result.id = id;
         data.push(result);
       }
@@ -118,15 +129,13 @@ class Content {
       const content = db.collection("content");
       await fetchContent([ID]);
 
-      if (DATA_LOCATION === "local") {
-        const doc = JSON.parse(fs.readFileSync("./.cache/content.json"))[ID];
-        doc.id = ID;
-        response.json(doc);
-      } else {
-        const doc = (await content.doc(ID).get()).data();
-        doc.id = ID;
-        response.json(doc);
-      }
+      var doc;
+      doc = DATA_LOCATION === "local" ? JSON.parse(fs.readFileSync("./.cache/content.json"))[ID] : (await content.doc(ID).get()).data();
+
+      const id = parseInt(ID);
+      if (!id) throw new Error("parseInt failed");
+      doc.id = id;
+      response.json(doc);
     } catch (error) {
       console.log(error);
       response.status(500);
@@ -375,10 +384,13 @@ function indexContent(items = null) {
                 const containers2 = resultObj2.containers || {};
                 if (Array.isArray(containers2)) {
                   for (const container2 of containers2) {
-                    const { id, metadata: { objectType, title, duration }, actions: actions2 } = container2;
+                    const { id, metadata: { objectType, title, duration, genres }, actions: actions2 } = container2;
                     const data = { title, type: objectType };
                     if (duration) {
                       data.duration = duration;
+                    }
+                    if (genres) {
+                      data.genres = genres[0];
                     }
                     if (DATA_LOCATION === "local") {
                       const json = JSON.parse(fs.readFileSync("./.cache/index.json"));
@@ -398,11 +410,14 @@ function indexContent(items = null) {
             }
           }
 
-          const { objectType, title, duration } = metadata;
+          const { objectType, title, duration, genres } = metadata;
           if (objectType !== "LAUNCHER") {
             const data = { title, type: objectType };
             if (duration) {
               data.duration = duration;
+            }
+            if (genres) {
+              data.genre = genres[0];
             }
             if (DATA_LOCATION === "local") {
               const json = JSON.parse(fs.readFileSync("./.cache/index.json"));
