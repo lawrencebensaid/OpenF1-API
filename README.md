@@ -22,6 +22,7 @@ Create a `.env` file with the following contents:
 # General
 PORT=8080
 OUT_FILE_PATH="./out.json"
+DATA_LOCATION=local
 
 # F1
 F1_USERNAME=<Insert your own>

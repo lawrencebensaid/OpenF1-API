@@ -1,6 +1,8 @@
 
 require("dotenv").config();
 const {
+  DATA_LOCATION,
+  FB_KEY,
   F1_USERNAME,
   F1_PASSWORD
 } = process.env;
@@ -9,13 +11,14 @@ const firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/firestore');
 
+const fs = require("fs");
 const http = require("request-promise-native");
 const F1tvClient = require("../F1tvClient.js");
 const F1tvContent = require("../models/F1tvContent.js");
 
 const HOST = "formula1.com";
 
-const db = firebase.firestore();
+const db = FB_KEY ? firebase.firestore() : null;
 
 
 var client;
@@ -40,8 +43,12 @@ class Content {
   async reindex(request, response) {
     try {
       const start = new Date().valueOf();
-      const index = db.collection("index");
-      (await index.get()).forEach(doc => { doc.ref.delete(); });
+      if (DATA_LOCATION === "local") {
+        fs.writeFileSync("./.cache/index.json", "{}");
+      } else {
+        const index = db.collection("index");
+        (await index.get()).forEach(doc => { doc.ref.delete(); });
+      }
       await indexContent();
       response.json({
         message: "Reindexing complete",
@@ -64,8 +71,14 @@ class Content {
       const index = db.collection("index");
       const search = (request.query.search || "").toLowerCase();
       const allIndexes = {};
-      for (const doc of (await index.get()).docs) {
-        allIndexes[doc.id] = doc.data();
+      const source = DATA_LOCATION === "local" ? JSON.parse(fs.readFileSync("./.cache/content.json")) : (await index.get()).docs;
+      for (const id in source) {
+        const doc = source[id]
+        if (DATA_LOCATION === "local") {
+          allIndexes[id] = doc;
+        } else {
+          allIndexes[doc.id] = doc.data();
+        }
       }
       var results = allIndexes;
       if (search) {
@@ -104,9 +117,16 @@ class Content {
       const { ID } = request.params;
       const content = db.collection("content");
       await fetchContent([ID]);
-      const doc = (await content.doc(ID).get()).data();
-      doc.id = ID;
-      response.json(doc);
+
+      if (DATA_LOCATION === "local") {
+        const doc = JSON.parse(fs.readFileSync("./.cache/content.json"))[ID];
+        doc.id = ID;
+        response.json(doc);
+      } else {
+        const doc = (await content.doc(ID).get()).data();
+        doc.id = ID;
+        response.json(doc);
+      }
     } catch (error) {
       console.log(error);
       response.status(500);
@@ -173,7 +193,12 @@ function fetchContent(indices = null) {
   const content = db.collection("content");
   return new Promise(async (resolve, reject) => {
     try {
-      indices = indices || (await index.get()).docs.map(doc => doc.id);
+      if (DATA_LOCATION === "local") {
+        const json = JSON.parse(fs.readFileSync("./.cache/index.json"));
+        indices = indices || Object.keys(json);
+      } else {
+        indices = indices || (await index.get()).docs.map(doc => doc.id);
+      }
       for (const id of indices) {
         try {
           console.log(id);
@@ -292,7 +317,13 @@ function fetchContent(indices = null) {
                 }
               })
             };
-            await content.doc(id).set(structure);
+            if (DATA_LOCATION === "local") {
+              const json = JSON.parse(fs.readFileSync("./.cache/content.json"));
+              json[id] = structure;
+              fs.writeFileSync("./.cache/content.json", JSON.stringify(json));
+            } else {
+              await content.doc(id).set(structure);
+            }
           } else {
             console.log("WHAT?! Total is more than 1. That's unexpected!");
           }
@@ -349,7 +380,13 @@ function indexContent(items = null) {
                     if (duration) {
                       data.duration = duration;
                     }
-                    await index.doc(id).set(data);
+                    if (DATA_LOCATION === "local") {
+                      const json = JSON.parse(fs.readFileSync("./.cache/index.json"));
+                      json[id] = data
+                      fs.writeFileSync("./.cache/index.json", JSON.stringify(json));
+                    } else {
+                      await index.doc(id).set(data);
+                    }
                     const uri2 = actions2[0].uri;
                     if (objectType === "BUNDLE" && uri2) {
                       const { resultObj: { containers } } = JSON.parse(await http.get(`https://f1tv.${HOST}${uri2}`));
@@ -367,30 +404,15 @@ function indexContent(items = null) {
             if (duration) {
               data.duration = duration;
             }
-            await index.doc(id).set(data);
+            if (DATA_LOCATION === "local") {
+              const json = JSON.parse(fs.readFileSync("./.cache/index.json"));
+              json[id] = data
+              fs.writeFileSync("./.cache/index.json", JSON.stringify(json));
+            } else {
+              await index.doc(id).set(data);
+            }
           }
         }
-      }
-      resolve();
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
-
-
-/**
- * 
- * 
- * @returns {Promise}
- */
-function extractBundles() {
-  const index = db.collection("index");
-  return new Promise(async (resolve, reject) => {
-    try {
-      const bundles = await index.where("type", "==", "bundle").get();
-      for (const { page } of bundles) {
-        const response = JSON.parse(await http.get(`https://f1tv.${HOST}/2.0/R/ENG/WEB_DASH/ALL/PAGE/${page}/F1_TV_Pro_Annual/2`));
       }
       resolve();
     } catch (error) {

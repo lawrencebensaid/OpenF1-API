@@ -3,6 +3,7 @@
 require("dotenv").config();
 const {
   PORT,
+  DATA_LOCATION,
   F1_USERNAME,
   F1_PASSWORD,
   FB_KEY,
@@ -33,11 +34,22 @@ const express = require("express");
 
 const { version, description } = require('./package.json');
 
-const db = firebase.firestore();
+const db = FB_KEY ? firebase.firestore() : null;
 
 
 (async () => {
 
+  if (DATA_LOCATION === "local") {
+    if (!fs.existsSync("./.cache")) {
+      fs.mkdirSync("./.cache");
+    }
+    if (!fs.existsSync("./.cache.index.json")) {
+      fs.writeFileSync("./.cache/index.json", "{}");
+    }
+    if (!fs.existsSync("./.cache.content.json")) {
+      fs.writeFileSync("./.cache/content.json", "{}");
+    }
+  }
 
   const client = new F1tvClient();
 
