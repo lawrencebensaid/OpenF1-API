@@ -4,7 +4,8 @@ const {
   DATA_LOCATION,
   FB_KEY,
   F1_USERNAME,
-  F1_PASSWORD
+  F1_PASSWORD,
+  F1_API_KEY
 } = process.env;
 
 const firebase = require('firebase/app');
@@ -37,6 +38,28 @@ var client;
  */
 class Content {
 
+
+  /**
+   * 
+   */
+  async upcoming(request, response) {
+    try {
+      const json = await http.get({
+        uri: "https://api.formula1.com/v1/event-tracker",
+        headers: {
+          locale: "en",
+          apikey: F1_API_KEY
+        }
+      });
+      const { seasonContext } = JSON.parse(json)
+      response.json(seasonContext.timetables || []);
+    } catch (error) {
+      console.log(error);
+      response.status(500);
+      response.json({ message: error.message });
+    }
+  }
+
   /**
    * 
    */
@@ -49,7 +72,9 @@ class Content {
         const index = db.collection("index");
         (await index.get()).forEach(doc => { doc.ref.delete(); });
       }
-      await indexContent();
+      await indexContent(await client.getHome());
+      await indexContent(await client.getArchive());
+      await indexContent(await client.getDocumentaries());
       response.json({
         message: "Reindexing complete",
         duration: Math.floor((new Date().valueOf() - start) / 1000)
@@ -360,7 +385,7 @@ function indexContent(items = null) {
   return new Promise(async (resolve, reject) => {
     try {
       if (items === null) {
-        items = await client.getArchive();
+        items = await client.getHome();
       }
       for (const i in items) {
         const container = items[i];

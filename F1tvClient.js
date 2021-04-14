@@ -28,8 +28,28 @@ class F1tvClient {
    * 
    * @returns {Promise<object>}
    */
+  getHome() {
+    return this.getPage(395);
+  }
+
+
+  /**
+   * 
+   * 
+   * @returns {Promise<object>}
+   */
   getArchive() {
     return this.getPage(493);
+  }
+
+
+  /**
+   * 
+   * 
+   * @returns {Promise<object>}
+   */
+  getDocumentaries() {
+    return this.getPage(413);
   }
 
 

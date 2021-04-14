@@ -92,24 +92,52 @@ const db = FB_KEY ? firebase.firestore() : null;
   });
 
   app.post("/v2/reindex", [middleware], async (request, response) => {
+    response.redirect(301, "/reindex")
+  });
+
+  app.post("/reindex", [middleware], async (request, response) => {
     new Content().reindex(request, response);
   });
 
   app.get("/v2/content", [middleware], async (request, response) => {
+    response.redirect(301, "/content")
+  });
+
+  app.get("/content", [middleware], async (request, response) => {
     new Content().index(request, response);
   });
 
   app.get("/v2/content/:ID", [middleware], async (request, response) => {
+    response.redirect("/content/:ID")
+  });
+
+  app.get("/content/:ID", [middleware], async (request, response) => {
     new Content().show(request, response);
   });
 
   app.get("/v2/content/:ID/provision", [middleware], async (request, response) => {
+    response.redirect("/content/:ID/provision")
+  });
+
+  app.get("/content/:ID/provision", [middleware], async (request, response) => {
     new Content().provision(request, response);
   });
 
   app.get("/v2/content/:ID/thumbnail", [], async (request, response) => {
+    response.redirect("/content/:ID/thumbnail")
+  });
+
+  app.get("/content/:ID/thumbnail", [], async (request, response) => {
     new Content().thumbnail(request, response);
   });
+
+  app.get("/event/upcoming", [], async (request, response) => {
+    new Content().upcoming(request, response);
+  });
+
+  // app.get("/live", [], async (request, response) => {
+  //   new Content().live(request, response);
+  // });
 
   app.listen(PORT || 80);
 
