@@ -6,6 +6,7 @@ const {
   DATA_LOCATION,
   F1_USERNAME,
   F1_PASSWORD,
+  F1_API_KEY_2,
   FB_KEY,
   FB_PROJECT_ID,
   FB_SENDER_ID,
@@ -26,6 +27,7 @@ firebase.initializeApp({
   appId: `1:${FB_SENDER_ID}:web:${FB_APP_ID}`
 });
 
+const http = require("request-promise-native");
 const F1tvClient = require("./F1tvClient.js");
 const Content = require("./controllers/Content.js");
 const fs = require("fs");
@@ -90,6 +92,36 @@ const db = FB_KEY ? firebase.firestore() : null;
 
   app.get(["/v1/event/upcoming", "/event/upcoming"], [], async (request, response) => {
     new Content().upcoming(request, response);
+  });
+
+  app.get(["/v1/editorial/constructor", "/editorial/constructor"], [], async (request, response) => {
+    const body = await http.get({
+      uri: "https://api.formula1.com/v1/editorial-constructorlisting/listing",
+      headers: {
+        apikey: F1_API_KEY_2
+      }
+    });
+    response.json(JSON.parse(body));
+  });
+
+  app.get(["/v1/editorial/driver", "/editorial/driver"], [], async (request, response) => {
+    const body = await http.get({
+      uri: "https://api.formula1.com/v1/editorial-driverlisting/listing",
+      headers: {
+        apikey: F1_API_KEY_2
+      }
+    });
+    response.json(JSON.parse(body));
+  });
+
+  app.get(["/v1/editorial/schedule", "/editorial/schedule"], [], async (request, response) => {
+    const body = await http.get({
+      uri: "https://api.formula1.com/v1/editorial-eventlisting/events",
+      headers: {
+        apikey: F1_API_KEY_2
+      }
+    });
+    response.json(JSON.parse(body));
   });
 
   app.listen(PORT || 80);

@@ -28,6 +28,7 @@ DATA_LOCATION=local
 F1_USERNAME=<Insert your own>
 F1_PASSWORD=<Insert your own>
 F1_API_KEY=<Insert your own>
+F1_API_KEY_2=<Insert your own>
 
 # Firebase
 FB_PROJECT_ID=<Insert your own>
@@ -115,5 +116,23 @@ Name | Method | Type | Description | Example
 ### `GET /v1/event/upcoming`
 
 **Description:** Returns upcoming events.
+
+<br/>
+
+### `GET /v1/editorial/constructor`
+
+**Description:** Returns data.
+
+<br/>
+
+### `GET /v1/editorial/driver`
+
+**Description:** Returns data.
+
+<br/>
+
+### `GET /v1/editorial/schedule`
+
+**Description:** Returns data.
 
 <br/>
