@@ -6,391 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "v1",
-			"item": [
-				{
-					"name": "Content",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v1/content",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v1",
-								"content"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Image",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v1/image/{{imageID}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v1",
-								"image",
-								"{{imageID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v1/update",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v1",
-								"update"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "v2",
-			"item": [
-				{
-					"name": "Reindex",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/reindex",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"reindex"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Content",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const body = pm.response.json();",
-									"",
-									"if (body[0]) {",
-									"    pm.collectionVariables.set(\"contentID\", body[0].id);",
-									"}",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/content",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"content"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Content (search)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const body = pm.response.json();",
-									"",
-									"if (body[0]) {",
-									"    pm.collectionVariables.set(\"contentID\", body[0].id);",
-									"}",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/content?search=BRITISH",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"content"
-							],
-							"query": [
-								{
-									"key": "search",
-									"value": "BRITISH"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Content (genre)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const body = pm.response.json();",
-									"",
-									"if (body[0]) {",
-									"    pm.collectionVariables.set(\"contentID\", body[0].id);",
-									"}",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/content?genre=RACE",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"content"
-							],
-							"query": [
-								{
-									"key": "genre",
-									"value": "RACE"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Content show",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/content/{{contentID}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"content",
-								"{{contentID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Content provision",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/content/{{contentID}}/provision",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"content",
-								"{{contentID}}",
-								"provision"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Content provision (channel)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/content/{{contentID}}/provision?channel=1016",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"content",
-								"{{contentID}}",
-								"provision"
-							],
-							"query": [
-								{
-									"key": "channel",
-									"value": "1016"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Content thumbnail",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/content/{{contentID}}/thumbnail",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"content",
-								"{{contentID}}",
-								"thumbnail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Content thumbnail (width+height)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authkey",
-								"value": "{{accessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/v2/content/{{contentID}}/thumbnail?width=48&height=32",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"v2",
-								"content",
-								"{{contentID}}",
-								"thumbnail"
-							],
-							"query": [
-								{
-									"key": "width",
-									"value": "48"
-								},
-								{
-									"key": "height",
-									"value": "32"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "root",
+			"name": "Status",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -401,6 +17,320 @@
 					],
 					"path": [
 						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reindex",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authkey",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/reindex",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"reindex"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Content",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = pm.response.json();",
+							"",
+							"if (body[0]) {",
+							"    pm.collectionVariables.set(\"contentID\", body[0].id);",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authkey",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/content",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"content"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Content (search)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = pm.response.json();",
+							"",
+							"if (body[0]) {",
+							"    pm.collectionVariables.set(\"contentID\", body[0].id);",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authkey",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/content?search=BRITISH",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"content"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "BRITISH"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Content (genre)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = pm.response.json();",
+							"",
+							"if (body[0]) {",
+							"    pm.collectionVariables.set(\"contentID\", body[0].id);",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authkey",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/content?genre=RACE",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"content"
+					],
+					"query": [
+						{
+							"key": "genre",
+							"value": "RACE"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Content provision",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authkey",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/content/{{contentID}}/provision",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"content",
+						"{{contentID}}",
+						"provision"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Content show",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authkey",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/content/{{contentID}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"content",
+						"{{contentID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Content provision (channel)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authkey",
+						"value": "{{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/content/{{contentID}}/provision?channel=1016",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"content",
+						"{{contentID}}",
+						"provision"
+					],
+					"query": [
+						{
+							"key": "channel",
+							"value": "1016"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Content thumbnail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/content/{{contentID}}/thumbnail",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"content",
+						"{{contentID}}",
+						"thumbnail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Content thumbnail (width+height)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/content/{{contentID}}/thumbnail?width=48&height=32",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"content",
+						"{{contentID}}",
+						"thumbnail"
+					],
+					"query": [
+						{
+							"key": "width",
+							"value": "48"
+						},
+						{
+							"key": "height",
+							"value": "32"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Event",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const body = pm.response.json();",
+							"",
+							"if (body[0]) {",
+							"    pm.collectionVariables.set(\"contentID\", body[0].id);",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/event/upcoming",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"event",
+						"upcoming"
 					]
 				}
 			},
@@ -429,17 +359,17 @@
 	],
 	"variable": [
 		{
-			"id": "7d16b6db-50bd-437d-b210-1c480503a495",
+			"id": "e8b23f26-9ad0-4149-94b9-30a132fc79c8",
 			"key": "baseUrl",
 			"value": "https://api.openf1.nl"
 		},
 		{
-			"id": "6c22391f-04a8-4dee-b00d-34b9cf5a7b58",
+			"id": "f67c5803-13b5-4859-89a5-fae4aa4fa47c",
 			"key": "accessToken",
 			"value": ""
 		},
 		{
-			"id": "eeae6b97-d863-48e3-8dbc-f6134f3088e4",
+			"id": "56909578-2148-4181-8d97-833be8957666",
 			"key": "contentID",
 			"value": ""
 		}

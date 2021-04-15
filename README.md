@@ -54,13 +54,13 @@ When calling a protected endpoint you should include the `authkey` header contai
 
 <br/>
 
-### `POST /v2/reindex`
+### `POST /v1/reindex`
 
 **Description:** Reindexes all content.
 
 <br/>
 
-### `GET /v2/content`
+### `GET /v1/content`
 
 **Description:** Returns all content items as a response.
 
@@ -73,7 +73,7 @@ Name | Method | Type | Description | Example
 
 <br/>
 
-### `GET /v2/content/:ID`
+### `GET /v1/content/:ID`
 
 **Description:** Returns a specific content item as a response.
 
@@ -85,7 +85,7 @@ Name | Method | Type | Description | Example
 
 <br/>
 
-### `GET /v2/content/:ID/provision`
+### `GET /v1/content/:ID/provision`
 
 **Description:** Provisions a content HLS stream and returns the prepared uri as a response.
 
@@ -98,7 +98,7 @@ Name | Method | Type | Description | Example
 
 <br/>
 
-### `GET /v2/content/:ID/thumbnail`
+### `GET /v1/content/:ID/thumbnail`
 
 **Description:** Returns the content's thumbnail as an image.
 
@@ -109,5 +109,11 @@ Name | Method | Type | Description | Example
 **ID** | params | `Number` | Content ID | 1000000415
 **width** | query | `Number` | Search query | 1920
 **height** | query | `Number` | Search query | 1080
+
+<br/>
+
+### `GET /v1/event/upcoming`
+
+**Description:** Returns upcoming events.
 
 <br/>

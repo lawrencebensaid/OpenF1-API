@@ -51,8 +51,15 @@ class Content {
           apikey: F1_API_KEY
         }
       });
-      const { seasonContext } = JSON.parse(json)
-      response.json(seasonContext.timetables || []);
+      const { seasonContext, race } = JSON.parse(json);
+      const events = seasonContext.timetables || [];
+      for (const event of events) {
+        event.country = race.meetingCountryName
+        event.startTime += event.gmtOffset;
+        event.endTime += event.gmtOffset;
+        delete event.gmtOffset;
+      }
+      response.json(events);
     } catch (error) {
       console.log(error);
       response.status(500);
@@ -207,6 +214,11 @@ class Content {
       response.contentType("image/jpeg");
       response.send(await client.image(pictureUrl, width, height));
     } catch (error) {
+      if (error.message.toLowerCase().includes("content id must be a number")) {
+        response.status(400);
+        response.json({ message: "Content ID must be a number" });
+        return;
+      }
       console.log(error);
       response.status(500);
       response.json({ message: error.message });

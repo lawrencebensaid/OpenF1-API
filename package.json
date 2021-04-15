@@ -1,6 +1,6 @@
 {
   "name": "openf1",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "OpenF1 REST API",
   "scripts": {
     "start": "./main.js"

@@ -61,83 +61,36 @@ const db = FB_KEY ? firebase.firestore() : null;
 
   const app = express();
 
-  app.get("/", (request, response) => {
+  app.get(["/v1", "/"], (request, response) => {
     response.json({
       status: "normal",
       version, description
     });
   });
 
-  app.get("/v1/content", [middleware], async (request, response) => {
-    response.json(JSON.parse(fs.readFileSync(OUT_FILE_PATH)));
-  });
-
-  app.get("/v1/image/:ID", [middleware], async (request, response) => {
-    const { ID } = request.params;
-    response.contentType("image/jpeg");
-    response.send(await client.image(ID));
-  });
-
-  app.post("/v1/update", [middleware], async (request, response) => {
-    try {
-      const index = await client.index();
-      response.json(index);
-    } catch (error) {
-      console.log(error);
-      response.status(400);
-      response.json({
-        error: error.message
-      });
-    }
-  });
-
-  app.post("/v2/reindex", [middleware], async (request, response) => {
-    response.redirect(301, "/reindex")
-  });
-
-  app.post("/reindex", [middleware], async (request, response) => {
+  app.post(["/v1/reindex", "/reindex"], [middleware], async (request, response) => {
     new Content().reindex(request, response);
   });
 
-  app.get("/v2/content", [middleware], async (request, response) => {
-    response.redirect(301, "/content")
-  });
-
-  app.get("/content", [middleware], async (request, response) => {
+  app.get(["/v1/content", "/content"], [middleware], async (request, response) => {
     new Content().index(request, response);
   });
 
-  app.get("/v2/content/:ID", [middleware], async (request, response) => {
-    response.redirect("/content/:ID")
-  });
-
-  app.get("/content/:ID", [middleware], async (request, response) => {
+  app.get(["/v1/content/:ID", "/content/:ID"], [middleware], async (request, response) => {
     new Content().show(request, response);
   });
 
-  app.get("/v2/content/:ID/provision", [middleware], async (request, response) => {
-    response.redirect("/content/:ID/provision")
-  });
-
-  app.get("/content/:ID/provision", [middleware], async (request, response) => {
+  app.get(["/v1/content/:ID/provision", "/content/:ID/provision"], [middleware], async (request, response) => {
     new Content().provision(request, response);
   });
 
-  app.get("/v2/content/:ID/thumbnail", [], async (request, response) => {
-    response.redirect("/content/:ID/thumbnail")
-  });
-
-  app.get("/content/:ID/thumbnail", [], async (request, response) => {
+  app.get(["/v1/content/:ID/thumbnail", "/content/:ID/thumbnail"], [], async (request, response) => {
     new Content().thumbnail(request, response);
   });
 
-  app.get("/event/upcoming", [], async (request, response) => {
+  app.get(["/v1/event/upcoming", "/event/upcoming"], [], async (request, response) => {
     new Content().upcoming(request, response);
   });
-
-  // app.get("/live", [], async (request, response) => {
-  //   new Content().live(request, response);
-  // });
 
   app.listen(PORT || 80);
 
