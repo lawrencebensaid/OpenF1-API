@@ -421,10 +421,11 @@ function indexContent(items = null) {
                 const containers2 = resultObj2.containers || {};
                 if (Array.isArray(containers2)) {
                   for (const container2 of containers2) {
-                    const { id, metadata: { objectType, title, duration, season, genres, emfAttributes }, actions: actions2 } = container2;
+                    const { id, metadata: { objectType, title, duration, season, isOnAir, genres, emfAttributes }, actions: actions2 } = container2;
                     const data = { title, type: objectType };
                       data.duration = duration;
                     data.season = season;
+                    data.isLive = isOnAir;
                     if (emfAttributes && emfAttributes.sessionEndTime) {
                       data.endTime = emfAttributes.sessionEndTime;
                     }
@@ -449,11 +450,12 @@ function indexContent(items = null) {
             }
           }
 
-          const { objectType, title, duration, season, genres, emfAttributes } = metadata;
+          const { objectType, title, duration, season, isOnAir, genres, emfAttributes } = metadata;
           if (objectType !== "LAUNCHER") {
             const data = { title, type: objectType };
               data.duration = duration;
             data.season = season;
+            data.isLive = isOnAir;
             if (emfAttributes && emfAttributes.sessionEndTime) {
               data.endTime = emfAttributes.sessionEndTime;
             }
