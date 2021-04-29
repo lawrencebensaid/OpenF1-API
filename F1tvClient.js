@@ -8,6 +8,7 @@ const F1tvContent = require("./models/F1tvContent.js");
 
 require("dotenv").config();
 const { F1_API_KEY } = process.env;
+const REESE84 = process.env.REESE84 || "null";
 const OUT_FILE_PATH = process.env.OUT_FILE_PATH || "./out.json";
 
 const HOST = "formula1.com";
@@ -192,7 +193,7 @@ class F1tvClient {
         const response = await http.post({
           uri: `https://api.${HOST}/v2/account/subscriber/authenticate/by-password`,
           headers: {
-            Cookie: "reese84=null",
+            Cookie: `reese84=${REESE84}`,
             apiKey: F1_API_KEY
           },
           json: {
