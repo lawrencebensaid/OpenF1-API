@@ -193,6 +193,7 @@ class F1tvClient {
         const response = await http.post({
           uri: `https://api.${HOST}/v2/account/subscriber/authenticate/by-password`,
           headers: {
+            "User-Agent": "RaceControl",
             Cookie: `reese84=${REESE84}`,
             apiKey: F1_API_KEY
           },
