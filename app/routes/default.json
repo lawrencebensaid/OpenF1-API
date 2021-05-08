@@ -1,0 +1,76 @@
+{
+  "frontends": [
+    "*"
+  ],
+  "middleware": [],
+  "endpoints": {
+    "GET /v1": [
+      "ContentController.root"
+    ],
+    "GET /": [
+      "ContentController.root"
+    ],
+    "POST /v1/reindex": [
+      "ContentController.auth",
+      "ContentController.reindex"
+    ],
+    "POST /reindex": [
+      "ContentController.auth",
+      "ContentController.reindex"
+    ],
+    "GET /v1/content": [
+      "ContentController.auth",
+      "ContentController.index"
+    ],
+    "GET /content": [
+      "ContentController.auth",
+      "ContentController.index"
+    ],
+    "GET /v1/content/:ID": [
+      "ContentController.auth",
+      "ContentController.show"
+    ],
+    "GET /content/:ID": [
+      "ContentController.auth",
+      "ContentController.show"
+    ],
+    "GET /v1/content/:ID/provision": [
+      "ContentController.auth",
+      "ContentController.provision"
+    ],
+    "GET /content/:ID/provision": [
+      "ContentController.auth",
+      "ContentController.provision"
+    ],
+    "GET /v1/content/:ID/thumbnail": [
+      "ContentController.thumbnail"
+    ],
+    "GET /content/:ID/thumbnail": [
+      "ContentController.thumbnail"
+    ],
+    "GET /v1/event/upcoming": [
+      "ContentController.upcoming"
+    ],
+    "GET /event/upcoming": [
+      "ContentController.upcoming"
+    ],
+    "GET /v1/editorial/constructor": [
+      "ContentController.editorialConstructor"
+    ],
+    "GET /editorial/constructor": [
+      "ContentController.editorialConstructor"
+    ],
+    "GET /v1/editorial/driver": [
+      "ContentController.editorialDriver"
+    ],
+    "GET /editorial/driver": [
+      "ContentController.editorialDriver"
+    ],
+    "GET /v1/editorial/schedule": [
+      "ContentController.editorialSchedule"
+    ],
+    "GET /editorial/schedule": [
+      "ContentController.editorialSchedule"
+    ]
+  }
+}
